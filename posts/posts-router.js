@@ -17,6 +17,7 @@ router.get('/', (req, res) => {
         });
     });
 })
+
 //works on Postman
 
 router.get('/:id', (req, res) => {
@@ -60,6 +61,42 @@ router.post('/', (req, res) => {
 
 //works on Postman
 
+
+router.get('/:id/comments', async (req, res) => {
+    try {
+        const post_id = Number(req.params.id);
+        console.log(typeof post_id);
+        const comments = await Posts.findPostComments(post_id);
+        if(post_id) {
+            res.status(200).json(comments);
+        } else {
+            res.status(404).json({message: 'The post with the specified ID does not exist'})
+        }
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({
+            message: 'Error retriving the messages for this hub.'
+        })
+    }
+})
+
+//works on Postman
+
+router.post('/:id/comments', async (req, res) => {
+    const commentInfo = {...req.body, post_id: req.params.id};
+
+    try {
+        const comment = await Posts.insertComment(commentInfo);
+        res.status(201).json(comment);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({err})
+    }
+})
+
+//Works on Postman
+
+
 router.delete('/:id', (req, res) => {
     Posts.remove(req.params.id)
     .then(posts => {
@@ -99,6 +136,6 @@ router.put('/:id', (req, res) => {
     });
 })
 
-//Receiveing error message, but is updating on Postman
+//Updating on Postman
 
 module.exports = router;

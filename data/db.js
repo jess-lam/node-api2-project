@@ -41,6 +41,7 @@ function remove(id) {
 }
 
 function findPostComments(postId) {
+  console.log(postId)
   return db('comments')
     .join('posts', 'posts.id', 'post_id')
     .select('comments.*', 'title as post')
