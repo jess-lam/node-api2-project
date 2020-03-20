@@ -62,23 +62,27 @@ router.post('/', (req, res) => {
 //works on Postman
 
 
-router.get('/:id/comments', async (req, res) => {
-    try {
-        const post_id = Number(req.params.id);
-        console.log(typeof post_id);
-        const comments = await Posts.findPostComments(post_id);
-        if(post_id) {
-            res.status(200).json(comments);
-        } else {
-            res.status(404).json({message: 'The post with the specified ID does not exist'})
-        }
-    } catch(err) {
-        console.log(err);
-        res.status(500).json({
-            message: 'Error retriving the messages for this hub.'
+router.get('/:id/comments', (req, res) => {
+
+        Posts.findById(req.params.id)
+        .then(posts => {
+            if(posts){
+                Posts.findPostComments(req.params.id)
+                .then(comment =>{
+                    if(comment){
+                        res.status(200).json(comment)
+                    } else{
+                        res.status(404).json({Error:"This post does not have any comments"})
+                    }
+                })
+            } else{
+                res.status(404).json({Error:"that post ID does not exist"})
+            }
         })
-    }
-})
+    })
+    
+
+//need to use findById as well as findPostComments for the get request. 
 
 //works on Postman
 
